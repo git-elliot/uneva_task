@@ -142,7 +142,7 @@ class HomePageState extends State<HomePage> {
       child: new Row(
         children: <Widget>[
           new Expanded(
-            child: new Text("Welcome Dr. Abc",style: _titleFont,textAlign: TextAlign.center,),
+            child: new Text("Welcome Dr. ABC",style: _titleFont,textAlign: TextAlign.center,),
           ),
         ],
       ),

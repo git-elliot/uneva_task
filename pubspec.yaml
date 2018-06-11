@@ -23,7 +23,6 @@ dev_dependencies:
 flutter:
 
   assets:
-    - assets/index.jpg
     - assets/flutter_icon.png
     - assets/baseline_location_on_black_18dp.png
     - assets/ic_launcher.png
