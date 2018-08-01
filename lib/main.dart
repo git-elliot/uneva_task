@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Uneva task',
+      title: 'Uneva Task',
       home: new HomePage(),
     );
   }
