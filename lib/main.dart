@@ -1,8 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:firebase_database/firebase_database.dart';
 
 void main() => runApp(new MyApp());
 
@@ -10,12 +9,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Uneva Task',
-      home:
-            new HomePage(),
+      title: 'Uneva task',
+      home: new HomePage(),
     );
   }
 }
+
 class HomePage extends StatefulWidget {
   @override
   createState() => new HomePageState();
@@ -24,9 +23,24 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   List images = ['assets/p0.png','assets/p1.png','assets/p2.png'];
   String item = "Dashboard";
+  String loadingDone = "false";
   final _titleFont = new TextStyle(fontSize: 18.0);
   final _subtitleFont = new TextStyle(fontSize:  14.0);
+  DatabaseReference mainRefernce = FirebaseDatabase.instance.reference().child('uneva_task');
+  StreamSubscription<Event> _unevaTask;
+  List<User> usersList = new List();
 
+  HomePageState(){
+
+    _unevaTask = mainRefernce.onChildAdded.listen((Event event){
+      setState(() {
+        usersList.add(new User.fromSnapshot(event.snapshot));
+      });
+  }, onDone: (){
+      loadingDone = "true";
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
    return new Scaffold(
@@ -101,7 +115,30 @@ class HomePageState extends State<HomePage> {
      body : _getItemData(context)
    );
   }
+  _allStudentReal(BuildContext context){
+     if(loadingDone == false) {
+       print("not loaded");
+      return new Text('Loading...');
+      }
+      return new ListView.builder(itemCount: usersList.length,
+       itemBuilder: (context,index) => _buildListItemReal(context,usersList[index],index));
 
+  }
+  Widget _buildListItemReal(BuildContext context,User user, int index){
+    print("name : ${user.name} bday : ${user.bday}");
+    return new ListTile(
+      leading: new CircleAvatar(backgroundColor: Colors.grey, child : new Image(image : AssetImage(images[index%3]))),
+      key : new ValueKey(user.key),
+      title: new Container(margin: new EdgeInsets.only(top: 10.0),child: new Text(user.name,style: _titleFont)),
+      subtitle: new Container(
+        margin: new EdgeInsets.only(bottom: 5.0,left: 5.0),
+        child:  new Text(
+            user.bday,
+            style : _subtitleFont),),
+      onTap: () => print("clicked on ${user.name}"), trailing: new Text(">"),
+    );
+
+  }
   _allStudent(BuildContext context){
     return new StreamBuilder(stream: Firestore.instance.collection('allStudents').snapshots() ,builder: (context, snapshots){
       if(!snapshots.hasData) return Text('Loading...',style: _titleFont,textAlign: TextAlign.center);
@@ -153,7 +190,18 @@ class HomePageState extends State<HomePage> {
        return _dashboard(context);
     }
     if(item=="All Student"){
-    return _allStudent(context);
+    return _allStudentReal(context);
   }
   }
+}
+class User {
+  final String key;
+ final String name;
+ final String bday;
+ User(this.name,this.bday);
+
+ User.fromSnapshot(DataSnapshot snapshot): key = snapshot.key,
+  name = snapshot.value['name'],
+  bday = snapshot.value['birthday'];
+
 }
