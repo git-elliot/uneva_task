@@ -1,4 +1,5 @@
 # uneva_task
+[![Codemagic build status](https://api.codemagic.io/apps/5d60cfe9ee40b21bf599e39d/5d60cfe9ee40b21bf599e39c/status_badge.svg)](https://codemagic.io/apps/5d60cfe9ee40b21bf599e39d/5d60cfe9ee40b21bf599e39c/latest_build)
 
 A new Flutter application.
 
